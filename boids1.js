@@ -113,11 +113,11 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 		tmpvec.vx = chik.pos.vx - this.pos.vx;// direction of neighbor
 		tmpvec.vy = chik.pos.vy - this.pos.vy;
 		tmpvec.normalize();
-		//forces.vx += tmpvec.vx ;
-		//forces.vy += tmpvec.vy ;
+		forces.vx += tmpvec.vx /10;
+		forces.vy += tmpvec.vy /10;
 		//follow
-		forces.vx += chik.pos.vx * 6;
-		forces.vy += chik.pos.vy * 6;
+		forces.vx += chik.pos.vx ;
+		forces.vy += chik.pos.vy ;
 	    }
 	    //walls
 	    if( this.pos.x + this.pos.vx * speed < 0 ) 
@@ -127,10 +127,11 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 	    if( this.pos.y + this.pos.vy * speed < 0 ) 
 		forces.vy += -this.pos.vy * 10;
 	    else if( this.pos.y + this.pos.vy * speed > 1 ) 
-		forces.vy += -this.pos.vy * 10;
-
-
-	
+		forces.vy += -this.pos.vy * 10;	
+	}
+	for( var j in attractors)
+	{
+	    // TODO:put attractor code here
 	}
 	//_testlog += " forces before normalize " + forces.toString2();
 	forces.normalize();
