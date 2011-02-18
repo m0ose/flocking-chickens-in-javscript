@@ -4,6 +4,12 @@ var Hei;
 
 function testSim()
 {
+    init();
+    setInterval ( 'iterate()' , 20);
+    setInterval( 'drawEm()', 40);
+}
+function init()
+{
     var Z = document.getElementById("_canvas");
     Wid = Z.width = Hei = Z.height = 600;//window.innerHeight -24;
     X = Z.getContext("2d");
@@ -22,28 +28,36 @@ function testSim()
     attractors.push( new attractor( 0.5,0.5, -0.04,0.2) );
 
 
-//start simulation
-    setInterval ( "iterate()" , 20);
+
 
 }
 function iterate()
 {
-    //clear screen
-    X.fillStyle = "rgba(0, 0, 0, 0.9)";// put black rectangle down
-    X.fillRect( 0,0, Wid, Hei);
-    X.beginPath();
-    X.strokeStyle = "blue";
-    X.fillStyle = "red";
 
 // move em around
     for( i in flock)
 	{
-    X.beginPath();
-
 	    var bird = flock[i];
 	    bird.applyForces();
 	    bird.move();
+	}
+}
+
+function drawEm()
+{
+    //clear screen
+    X.fillStyle = "rgba(0,0,0,0.8)";
+    X.fillRect( 0,0, Wid, Hei);
+    X.fill();  
+
+    //bird color
+    X.fillStyle = 'red';
+    for( i in flock)
+    {
+	    var bird = flock[i];
+	   
 	    //draw bird
+	    X.beginPath();
 	    X.moveTo( bird.pos.x*Wid, bird.pos.y * Hei);
 	    X.arc(bird.pos.x*Wid,bird.pos.y*Hei, 9 , 0 , 6.3, true);
 	    X.fill();
@@ -77,4 +91,5 @@ function iterate()
 	X.fill();
 	X.closePath();
     }
+
 }
