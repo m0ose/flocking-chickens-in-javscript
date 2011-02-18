@@ -119,12 +119,20 @@ function testSim()
     Wid = Z.width = Hei = Z.height = 600;//window.innerHeight -24;
     X = Z.getContext("2d");
     var flock_size = 20;
-
+    flock = [];
 //populate flock
     for( var i = 0 ; i < flock_size; i++)
     {
 	flock.push( new chicken( Math.random(), Math.random(), 0.04 + Math.random() * 0.04, 0.04, 0.002 + Math.random() * 0.004) );
     }
+// add one attractor
+    var attract = new attractor( 0.5,0.5,0.04,0.3);
+    var attract2 = new attractor(2,2,0.01,2.3);
+    attractors.push( attract);
+    attractors.push( attract2);
+    attractors.push( new attractor( 0.5,0.5, -0.04,0.2) );
+
+
 //start simulation
     setInterval ( "iterate()" , 20);
 
@@ -164,4 +172,20 @@ function iterate()
 	    X.stroke();
 	    X.closePath();
 	}
+    for( i in attractors)
+    {
+	var atr = attractors[i];
+	X.beginPath();
+	if(atr.force > 0 )
+	    X.fillStyle = "rgba(255, 0, 0, 0.1)";// put black rectangle down
+	else
+	    X.fillStyle = "rgba(0,0,255, 0.1)";// put black rectangle down
+
+	X.strokeStyle = "red";
+	X.moveTo( atr.pos.x * Wid + atr.radius * Wid, atr.pos.y*Hei); 
+	X.arc(atr.pos.x*Wid,atr.pos.y*Hei, atr.radius * Wid , 0 , __twopi, true);
+	X.stroke();
+	X.fill();
+	X.closePath();
+    }
 }
