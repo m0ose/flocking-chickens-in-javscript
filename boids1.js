@@ -12,6 +12,7 @@ so the boundries are 0 and 1. no bird can go beyond those.
 var __twopi = 2 * Math.PI;
 var flock = [];// all of the chickens
 var attractors = [];// this is attractors and repellers
+//var boundry; // image with boundry
 
 function vec( x,y,vx,vy)
 {
@@ -62,6 +63,12 @@ function distance(va,vb)//distance between two birds
 
 
 
+function attractor(x,y, force, radius)
+{
+    this.pos = new vec(x,y,0,0);
+    this.force = force;
+    this.radius = radius;
+}
 
 function chicken( x,y, attract_radius, repel_radius, speed)
 {
@@ -75,9 +82,6 @@ function chicken( x,y, attract_radius, repel_radius, speed)
     
     this.move = function()
     {
-	//TODO
-//if x,y inbounds
-//also in polygon
 	var newvec = this.pos.clone();
 	newvec.x += newvec.vx * this.speed;
 	newvec.y += newvec.vy * this.speed;
@@ -88,25 +92,64 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 	}
     }
 
+    this.isMoveGood = function()
+    {
+	//walls
+	if( this.pos.x + this.pos.vx * speed < 0 ) {
+	    return false;
+	}
+	else if( this.pos.x + this.pos.vx * speed > 1 ) {
+	    return false;
+	}
+	if( this.pos.y + this.pos.vy * speed < 0 ) {
+	    return false;
+	}
+	else if( this.pos.y + this.pos.vy * speed > 1 ) {
+	    return false;
+	}
+	//boundry image
+	try
+	{
+	    if( patches && patches.patches)
+	    {
+		//var pix = context_polygon.getImageData( (this.pos.x + this.pos.vx * speed) * context_polygon.canvas.width , (this.pos.y + this.pos.vy * speed) * context_polygon.canvas.height ,1,1).data;
+		var lox = (this.pos.x + this.pos.vx * speed) * patches.width ;
+		lox = Math.floor(lox);
+		var loy = (this.pos.y + this.pos.vy * speed) * patches.height ;
+		loy = Math.floor(loy);
+		
+		if( patches.patches[lox][loy] == 0 ){
+		    return false;
+		}
+	    }
+	}
+	catch(e)
+	{
+
+	}
+	return true 
+    }
 
     this.applyForces = function()
     {
 // TODO  put a more eficciant thing here like a quad tree or patch
 	var forces = new vec(0,0,0,0);
 	var tmpvec = new vec(0,0,0,0);
-
+	var tmpdistance = 0;
 	for(var i in flock)
 	{
-
 	    var chik = flock[i];
-	    if( distance(chik,this) < this.r_repel )//in repel distance
+	    tmpdistance = distance(chik, this);
+
+	    if( tmpdistance < this.r_repel && tmpdistance != 0 )//in repel distance
 	    {   
 		//repel
 		tmpvec.vx = this.pos.vx - chik.pos.vx;// oppisite direction of neighbor
 		tmpvec.vy = this.pos.vy - chik.pos.vy;
 		tmpvec.normalize();
-		forces.vx += tmpvec.vx * 90;
-		forces.vy += tmpvec.vy * 90;
+		
+		forces.vx += tmpvec.vx / Math.pow( tmpdistance, 2);
+		forces.vy += tmpvec.vy / Math.pow( tmpdistance, 2);
 	    }
 	    else if( distance(chik, this) < this.r_attract )//attract distance
 	    {
@@ -119,24 +162,13 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 		//follow
 		forces.vx += chik.pos.vx ;
 		forces.vy += chik.pos.vy ;
+		//match speed
+		if( chik.speed < this.speed && this.speed > 0){
+		   // this.speed -= (this.speed - chik.speed)/10;
+		}
 	    }
-	    //walls
-	    if( this.pos.x + this.pos.vx * speed < 0 ) {
-		forces.vx += -this.pos.vx * 10;
-		this.speed = this.average_speed / 10;
-	    }
-	    else if( this.pos.x + this.pos.vx * speed > 1 ) {
-		forces.vx += -this.pos.vx * 10;
-		this.speed = this.average_speed / 10;
-	    }
-	    if( this.pos.y + this.pos.vy * speed < 0 ) {
-		forces.vy += -this.pos.vy * 10;
-	    	this.speed = this.average_speed / 10;
-	    }
-	    else if( this.pos.y + this.pos.vy * speed > 1 ) {
-		forces.vy += -this.pos.vy * 10;	
-	    	this.speed = this.average_speed / 10;
-	    }
+
+	    
 	}
 	for( var j in attractors)
 	{
@@ -151,23 +183,22 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 		forces.vx += tmpvec.vx * atr.force;
 		forces.vy += tmpvec.vy * atr.force;
 	    }
-	    // TODO:put attractor code here
 	}
-	//_testlog += " forces before normalize " + forces.toString2();
 	forces.normalize();
-	//_testlog += " forces after " + forces.toString2();
 	this.pos.vx += forces.vx;
 	this.pos.vy += forces.vy;
 	this.pos.normalize();
+	// it hit a walls
+	if( ! this.isMoveGood() )
+	{
+	    this.pos.vx = -this.pos.vx;
+	    this.pos.vy = -this.pos.vy;
+
+	    this.speed = this.average_speed / 4;    
+	}
 
 	// get speed closer to average speed
 	this.speed += (this.average_speed  - this.speed) / 20
-    }
-}
 
-function attractor(x,y, force, radius)
-{
-    this.pos = new vec(x,y,0,0);
-    this.force = force;
-    this.radius = radius;
+    }
 }

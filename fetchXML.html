@@ -1,0 +1,44 @@
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title> fetch KML</title>
+    <script src="js_ajax.js"></script>
+    <script type="text/javascript">
+      function addSampleButton(caption, clickHandler) {
+        var btn = document.createElement('input');
+        btn.type = 'button';
+        btn.value = caption;
+        
+        if (btn.attachEvent)
+          btn.attachEvent('onclick', clickHandler);
+        else
+          btn.addEventListener('click', clickHandler, false);
+
+        // add the button to the Sample UI
+        document.getElementById('sample-ui').appendChild(btn);
+      }
+      
+      function addSampleUIHtml(html) {
+        document.getElementById('sample-ui').innerHTML += html;
+      }
+    </script>
+
+<script src="fetchXML.js"></script>
+</head>
+<body style="font-family: arial, sans-serif; font-size: 13px; border: 0;">
+<div id="sample-ui"></div>
+<a href="" onclick="init()" > </a><br>
+
+<a href="javascript://null" onclick="fetchMain()" > main </a><br>
+
+
+<canvas id="_can"></canvas>
+
+
+</body>
+</html>
