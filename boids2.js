@@ -153,28 +153,29 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 		tmpvec.vy = this.pos.vy - chik.pos.vy;
 		tmpvec.normalize();
 		
-		forces.vx += tmpvec.vx / Math.pow( tmpdistance, 2);
-		forces.vy += tmpvec.vy / Math.pow( tmpdistance, 2);
+		forces.vx += tmpvec.vx* this.r_repel / Math.pow( tmpdistance, 2);
+		forces.vy += tmpvec.vy* this.r_repel/ Math.pow( tmpdistance, 2);
 	    }
 	    else if( distance(chik, this) < this.r_attract )//attract distance
 	    {
 		//attract
-		tmpvec.vx = chik.pos.x - this.pos.x;// direction of neighbor
+		tmpvec.vx = chik.pos.x - this.pos.x;
 		tmpvec.vy = chik.pos.y - this.pos.y;
 		tmpvec.normalize();
-		forces.vx += tmpvec.vx / 20;
-		forces.vy += tmpvec.vy /20;
+		forces.vx += tmpvec.vx * (this.r_attract - tmpdistance) / 20; 
+		forces.vy += tmpvec.vy * (this.r_attract - tmpdistance) / 20; 
 		//follow
-		forces.vx += chik.pos.vx ;
-		forces.vy += chik.pos.vy ;
+		forces.vx += chik.pos.vx * (this.r_attract - tmpdistance)/ this.r_attract; 
+		forces.vy += chik.pos.vy * (this.r_attract - tmpdistance )/this.r_attract ;
 		//match speed
 		if( chik.speed < this.speed && this.speed > 0){
-		   // this.speed -= (this.speed - chik.speed)/10;
+		    this.speed -= (this.speed - chik.speed)/(tmpdistance*100);
 		}
 	    }
 
 	    
 	}
+	forces.normalize();
 	for( var j in attractors)
 	{
 	    var atr = attractors[j];

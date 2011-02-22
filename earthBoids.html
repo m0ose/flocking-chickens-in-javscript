@@ -11,7 +11,7 @@ function runAll()
 {
 fetchMain();
 patches = new patchArray(60,60);
-testSim();
+startSim();
 }
 </script>
 </head>
@@ -19,7 +19,9 @@ testSim();
 
 
 <body>
-<a href="javascript://null" onclick="runAll()" > try </a><br>
+<a href="javascript://null" onclick="runAll()" > start </a><br>
+<a href="javascript://null" onclick="stopSim()" > stop </a><br>
+
 <canvas id="_bird_canvas" height="600" width="600"></canvas>
 
 </body>

@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="boids2.js"></script>
+
+<script src="simulator2.js"></script>
+
+<canvas id="_bird_canvas" height="600" width="600"></canvas>
+
+<script>
+var sim = new simulator();
+
+sim.startSim();//start siimulator when ready
+sim.attatchToCanvas( document.getElementById('_bird_canvas'));
+var can = document.getElementById('_bird_canvas');
+
+sim.attractors[0]= new attractor( 0.1,0.5, -100,0.3) ;
+
+can.onmousemove = function(e){
+  sim.attractors[0].pos.x = (e.clientX -can.offsetLeft)/ can.width;
+  sim.attractors[0].pos.y = (e.clientY -can.offsetTop)/ can.height;
+};
+
+</script>
+</head>
+
+<body>
+
+
+</body>
+
+</html>

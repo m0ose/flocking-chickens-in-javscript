@@ -16,6 +16,7 @@ function stateChanged(){
 		if(typ==0){
 		    //alert(xmlHTTP.responseText);
 		    status = " ajax loaded ";
+		    //send event here
 		}
 	}
 	if(xmlHTTP.readyState==1 || xmlHTTP.readyState==2){

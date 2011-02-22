@@ -115,7 +115,7 @@ var Hei;
 
 function testSim()
 {
-    var Z = document.getElementById("_canvas");
+    var Z = document.getElementById("_bird_canvas");
     Wid = Z.width = Hei = Z.height = 600;//window.innerHeight -24;
     X = Z.getContext("2d");
     var flock_size = 50;

@@ -3,19 +3,28 @@
  the guts of the simulation
    cody smith
 
-   run it using testSim();
+   run it using startSim();
 
 
 */
 var X;
 var Wid;
 var Hei;
-
-function testSim()
+var _sim_log = "";
+var __iter_interval;
+var __draw_interval;
+function startSim()
 {
     init();
-    setInterval ( 'iterate()' , 2);
-    setInterval( 'drawEm()', 40);
+    __iter_interval = setInterval ( 'iterate()' , 2);
+    __draw_interval = setInterval( 'drawEm()', 40);
+}
+function stopSim()
+{
+    if( __iter_interval)
+	clearInterval( __iter_interval);
+    if( __draw_interval)
+	clearInterval( __draw_interval);
 }
 function init()
 {
@@ -78,11 +87,11 @@ function drawEm()
     X.fillRect( 0,0, Wid, Hei);
     X.fill();  
 //
-//  draw boundry image
+//  draw boundry image if one exists
     try{
-	
+	X.putImageData( imagedata_polygon,0,0);
     }
-    catch(e){}
+    catch(e){ }
 
     //bird color
     X.fillStyle = 'red';
