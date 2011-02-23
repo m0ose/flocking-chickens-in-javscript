@@ -1,6 +1,6 @@
 
 
-ajax(0);//fetch the kml
+//ajax(0);//fetch the kml
 
 var polygons = [];
 polystring = "";
@@ -137,13 +137,13 @@ function drawPolygon()
     { 	    
 	var p = polygons[0].points[i];
 
-	var x = (p.lon - recta.x)*ratio ;
-	var y =  (p.lat - recta.y)*ratio;
+	var x =  (p.lon - recta.x)*ratio ;
+	var y =  height - (p.lat - recta.y)*ratio;
 	if( i == 0)
 	    context_polygon.moveTo(x,y);
 	else
 	    context_polygon.lineTo(x,y);
-	_log += "("+x+","+y+")";
+	_log += "("+x+","+(y)+")";
     }
     context_polygon.fill();
     context_polygon.stroke();
@@ -167,13 +167,15 @@ function patchArray(w,h)
 		var mr = Math.floor;
 		//var pix = context_polygon.getImageData(mr(x/w * canvas_polygon.width),mr(y/w * canvas_polygon.height),1,1).data; 
 		var pix = context_polygon.getImageData(mr(x/w * context_polygon.canvas.width),mr(y/w * context_polygon.canvas.height),1,1).data; 
-
+		
 		if( pix[0] > 0 || pix[1] > 0 || pix[2] > 0 ){
-		   this.patches[x][y] = 1; 
+		    this.patches[x][y] = 1; 
 		}
 	    }
 	}
     }
+    //return this;
+    
     this.whatsAt = function(x,y)
     {
 	var x2 = Math.floor( x * this.width);

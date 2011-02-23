@@ -6,135 +6,67 @@
 <title>Google Maps JavaScript API v3 Example: Overlay Simple</title>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script src="js_ajax.js"></script>
+<script src="overlay.js"></script>
+<script src='fetchXML.js'></script>
+<script src="boids2.js"></script>
+<script src="simulator2.js"></script>
 <script type="text/javascript">
+    
+ajax(0);//get the kml file
+var sim = null;
+xml_done = function( ){ 
 
-  var overlay;
-  var ctx;
-  USGSOverlay.prototype = new google.maps.OverlayView();
-var _center = { lat:33.43793462937843 ,  lon:-112.0205479637772 };
-  
+ 
+    fetchMain() 
+    initialize();
+    sim = new simulator();
+    
+    patches = new patchArray(100,100);
+    sim.attachBoundry( patches);
+    
+    sim.startSim();
+    
+ 
 
-  function initialize() {
-      var myLatLng = new google.maps.LatLng( _center.lat,_center.lon);
+
+};
+
+var overlay;
+var ctx;
+var _sw = { lat:33.43733935717403 ,  lon:-112.0276229510615 };
+var bb;
+
+function initialize() {
+    bb = boundingBox( polygons[0] );
+    
+    var myLatLng = new google.maps.LatLng( bb.y, bb.x);
     var myOptions = {
-      zoom: 18,
-      center: myLatLng,
-      mapTypeId: google.maps.MapTypeId.SATELLITE
+	zoom: 18,
+	center: myLatLng,
+	mapTypeId: google.maps.MapTypeId.SATELLITE
     };
 
+
+
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-    var swBound = new google.maps.LatLng(_center.lat  , _center.lon - 0.0009868745686958391 );
-    var neBound = new google.maps.LatLng(_center.lat  + 0.0005169775410536204, _center.lon  );
+    
+    var swBound = new google.maps.LatLng(bb.y  , bb.x  );
+    var neBound = new google.maps.LatLng(bb.y + bb.width , bb.x + bb.width );
     var bounds = new google.maps.LatLngBounds(swBound, neBound);
-
+    
     // Photograph courtesy of the U.S. Geological Survey
     var srcImage = 'http://www.safariegypt.com/egypt_nile_cruise/oberoiShehrayar/photos/OberoiSherayarSwimmingPool.jpg';
     overlay = new USGSOverlay(bounds, srcImage, map);
-  }
 
-  function USGSOverlay(bounds, image, map) {
 
-    // Now initialize all properties.
-    this.bounds_ = bounds;
-    this.image_ = image;
-    this.map_ = map;
-
-    // We define a property to hold the image's div. We'll 
-    // actually create this div upon receipt of the onAdd() 
-    // method so we'll leave it null for now.
-    this.div_ = null;
-
-    // Explicitly call setMap on this overlay
-    this.setMap(map);
-  }
-
-  USGSOverlay.prototype.onAdd = function() {
-
-    // Note: an overlay's receipt of onAdd() indicates that
-    // the map's panes are now available for attaching
-    // the overlay to the map via the DOM.
-
-    // Create the DIV and set some basic attributes.
-    var div = document.createElement('DIV');
-    div.style.borderStyle = "none";
-    div.style.borderWidth = "0px";
-    div.style.position = "absolute";
-
-    // Create an IMG element and attach it to the DIV.
-   // var img = document.createElement("img");
-    //img.src = this.image_;
-    //img.style.width = "100%";
-    //img.style.height = "100%";
-    //div.appendChild(img);
-
-//put some other canvas stuff in 
-      var canvas = document.createElement("canvas");
-      canvas.id = '_flock_canvas';
-      ctx = canvas.getContext('2d');
-      ctx.fillStyle = "rgba(0, 0, 1, 0.9)";// put black rectangle down
-      ctx.fillRect( 0,0, 200, 200);
-      ctx.fill();
-      div.appendChild(canvas);
-      setInterval ( "drawStuff()" , 500);
-
-    // Set the overlay's div_ property to this DIV
-    this.div_ = div;
-
-    // We add an overlay to a map via one of the map's panes.
-    // We'll add this overlay to the overlayImage pane.
-    var panes = this.getPanes();
-    panes.overlayImage.appendChild(div);
-  }
-
-  USGSOverlay.prototype.draw = function() {
-
-    // Size and position the overlay. We use a southwest and northeast
-    // position of the overlay to peg it to the correct position and size.
-    // We need to retrieve the projection from this overlay to do this.
-    var overlayProjection = this.getProjection();
-
-    // Retrieve the southwest and northeast coordinates of this overlay
-    // in latlngs and convert them to pixels coordinates.
-    // We'll use these coordinates to resize the DIV.
-    var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
-    var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
-
-    // Resize the image's DIV to fit the indicated dimensions.
-    var div = this.div_;
-    div.style.left = sw.x + 'px';
-    div.style.top = ne.y + 'px';
-    div.style.width = (ne.x - sw.x) + 'px';
-    div.style.height = (sw.y - ne.y) + 'px';
-    // resize the canvas
-    var flock_can = document.getElementById('_flock_canvas');
-      flock_can.width = (Math.abs(ne.x - sw.x));
-      flock_can.height = (Math.abs(sw.y - ne.y));
-      
-  }
-
-  USGSOverlay.prototype.onRemove = function() {
-    this.div_.parentNode.removeChild(this.div_);
-    this.div_ = null;
-  }
-
-function drawStuff()
-{
-    ctx.fillStyle = 'rgba(0,1,1,0.1) ';
-    ctx.fillRect( 0,0, ctx.canvas.width, ctx.canvas.height);
-
-    ctx.beginPath();
-    ctx.strokeStyle = 'blue';
-    ctx.moveTo(Math.random() * 200, Math.random() * 200);
-     ctx.lineTo(Math.random() * 200, Math.random() * 200);
-   // ctx.fill();
-    ctx.closePath();
-    ctx.stroke();
-
+    var georssLayer = new google.maps.KmlLayer('http://www.m0ose.com/javascripts/airportboundry.kml');
+    georssLayer.setMap(map);
 }
+
 </script>
-</head>
-<body onload="initialize()">
+    </head>
+<body>
   <div id="map_canvas"></div>
 </body>
 </html>

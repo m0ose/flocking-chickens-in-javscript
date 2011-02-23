@@ -10,7 +10,7 @@ so the boundries are 0 and 1. no bird can go beyond those.
 
 */
 var __twopi = 2 * Math.PI;
-var flock = [];// all of the chickens
+//var flock = [];// all of the chickens
 var attractors = [];// this is attractors and repellers
 //var boundry; // image with boundry
 
@@ -75,7 +75,7 @@ function attractor(x,y, force, radius)
     this.radius = radius;
 }
 
-function chicken( x,y, attract_radius, repel_radius, speed)
+function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 {
     this.pos = new vec( x, y, Math.random() * __twopi, Math.random() * __twopi);//random orientation
     this.r_attract = attract_radius;
@@ -83,6 +83,7 @@ function chicken( x,y, attract_radius, repel_radius, speed)
     this.pos.normalize();
     this.speed = speed;
     this.average_speed = speed;
+    this.mySimulator = mySimulator;
 
     
     this.move = function()
@@ -99,40 +100,7 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 
     this.isMoveGood = function()
     {
-	//walls
-	if( this.pos.x + this.pos.vx * speed < 0 ) {
-	    return false;
-	}
-	else if( this.pos.x + this.pos.vx * speed > 1 ) {
-	    return false;
-	}
-	if( this.pos.y + this.pos.vy * speed < 0 ) {
-	    return false;
-	}
-	else if( this.pos.y + this.pos.vy * speed > 1 ) {
-	    return false;
-	}
-	//boundry image
-	try
-	{
-	    if( patches && patches.patches)
-	    {
-		//var pix = context_polygon.getImageData( (this.pos.x + this.pos.vx * speed) * context_polygon.canvas.width , (this.pos.y + this.pos.vy * speed) * context_polygon.canvas.height ,1,1).data;
-		var lox = (this.pos.x + this.pos.vx * speed) * patches.width ;
-		lox = Math.floor(lox);
-		var loy = (this.pos.y + this.pos.vy * speed) * patches.height ;
-		loy = Math.floor(loy);
-		
-		if( patches.patches[lox][loy] == 0 ){
-		    return false;
-		}
-	    }
-	}
-	catch(e)
-	{
-
-	}
-	return true 
+	return mySimulator.isMoveGood( this);
     }
 
     this.applyForces = function()
@@ -141,9 +109,9 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 	var forces = new vec(0,0,0,0);
 	var tmpvec = new vec(0,0,0,0);
 	var tmpdistance = 0;
-	for(var i in flock)
+	for(var i in this.mySimulator.flock)
 	{
-	    var chik = flock[i];
+	    var chik = this.mySimulator.flock[i];
 	    tmpdistance = distance(chik, this);
 
 	    if( tmpdistance < this.r_repel && tmpdistance != 0 )//in repel distance
@@ -175,10 +143,11 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 
 	    
 	}
-	forces.normalize();
-	for( var j in attractors)
+	
+	// ATTRACTORS AND REPULSORS
+	for( var j in this.mySimulator.attractors)
 	{
-	    var atr = attractors[j];
+	    var atr = this.mySimulator.attractors[j];
 	    var dist = distance( atr.pos, this.pos);
 	    
 	    if( dist <= atr.radius)
@@ -186,22 +155,29 @@ function chicken( x,y, attract_radius, repel_radius, speed)
 		tmpvec.vx = atr.pos.x - this.pos.x;
 		tmpvec.vy = atr.pos.y - this.pos.y;
 		tmpvec.normalize();
-		forces.vx += tmpvec.vx * atr.force;
-		forces.vy += tmpvec.vy * atr.force;
+		forces.vx += tmpvec.vx * atr.force * ( dist/atr.radius);
+		forces.vy += tmpvec.vy * atr.force * (dist/atr.radius);
 	    }
 	}
 	forces.normalize();
-	this.pos.vx += forces.vx;
-	this.pos.vy += forces.vy;
-	this.pos.normalize();
+
 	// it hit a walls
 	if( ! this.isMoveGood() )
 	{
-	    this.pos.vx = -this.pos.vx;
-	    this.pos.vy = -this.pos.vy;
+	    forces.vx += -this.pos.vx * 2 + 2*Math.random()-1;
+	    forces.vy += -this.pos.vy * 2 + 2*Math.random()-1;
+	    this.pos.x = this.pos.x - this.pos.vx *speed;
+	    this.pos.y = this.pos.y - this.pos.vy  *speed;
 
-	    this.speed = this.average_speed / 4;    
+	   // this.speed = 0;
+	    this.speed * 0.9;    
 	}
+	forces.normalize();
+
+	this.pos.vx += forces.vx;
+	this.pos.vy += forces.vy;
+	this.pos.normalize();
+
 
 	// get speed closer to average speed
 	this.speed += (this.average_speed  - this.speed) / 20

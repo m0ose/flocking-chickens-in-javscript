@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="js_ajax.js"></script>
+<script src="fetchXML.js"></script>
+<script src="boids2.js"></script>
+<script src="simulator2.js"></script>
+
+<script>
+ajax(0);
+    var patches ;
+xml_done = startSim;//js_ajax calls xml_done when it finishes
+var sim = null;
+function runAll()
+{
+    fetchMain();
+    if( !sim)
+	sim = new simulator();
+    
+    patches = new patchArray(60,60);
+    sim.attachBoundry( patches);
+   
+    sim.startSim();
+    sim.attatchToCanvas( document.getElementById('_bird_canvas'))
+
+    //add a mouse repulsive thing
+    sim.attractors[0]= new attractor( 0.1,0.5, -900,0.2) ;
+    
+    if( sim.simContext)
+    {
+	var canv = sim.simContext.canvas;
+	canv.onmousemove = function(e){
+	    sim.attractors[0].pos.x = (e.clientX -canv.offsetLeft)/ canv.width;
+	    sim.attractors[0].pos.y = (e.clientY -canv.offsetTop)/ canv.height;
+	};
+    }
+}
+function stopSim()
+{
+    if( sim)
+	sim.stopSim();
+}
+function startSim()
+{
+    if( !sim)
+    {
+	runAll();
+    }
+    else
+    {
+	sim.startSim();
+    }
+}
+
+
+</script>
+    </head>
+
+
+
+<body>
+<a href="javascript://null" onclick="runAll()" > start </a><br>
+<a href="javascript://null" onclick="stopSim()" > stop </a><br>
+
+<canvas id="_bird_canvas" height="600" width="600"></canvas>
+
+</body>
+
+
+</html>

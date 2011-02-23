@@ -1,6 +1,6 @@
 typ=0;
 status = ""
-kml_URL = "crowd_boundry.kml";
+kml_URL = "airportboundry.kml";
 xmlHTTP = null;
 
 function ajaxinit(){
@@ -17,6 +17,8 @@ function stateChanged(){
 		    //alert(xmlHTTP.responseText);
 		    status = " ajax loaded ";
 		    //send event here
+		    //im_ready();
+		    xml_done();
 		}
 	}
 	if(xmlHTTP.readyState==1 || xmlHTTP.readyState==2){

@@ -13,7 +13,7 @@ sim.startSim();//start siimulator when ready
 sim.attatchToCanvas( document.getElementById('_bird_canvas'));
 var can = document.getElementById('_bird_canvas');
 
-sim.attractors[0]= new attractor( 0.1,0.5, -100,0.3) ;
+sim.attractors[0]= new attractor( 0.1,0.5, 999,0.2) ;
 
 can.onmousemove = function(e){
   sim.attractors[0].pos.x = (e.clientX -can.offsetLeft)/ can.width;
