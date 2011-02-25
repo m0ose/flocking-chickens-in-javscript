@@ -2,7 +2,7 @@ function simulator()
 { 
     //chicken related variables
     //DEFAULT VALUES
-    this.flockSize = 60;
+    this.flockSize = 80;
     this.repelRadius = 0.03;
     this.attractRadius = 0.05;
     this.radiusVariation = 0.001;
@@ -243,7 +243,7 @@ function drawEm( simu)
 	    X.fillStyle = "rgba(0,0,255, 1.0)";
 	X.fillRect (atr.pos.x * Wid , atr.pos.y*Hei, 10, 10) ;
 	//draw the ring of influence
-	if( simu.drawAttractors)
+	if( simu.drawAttractors && atr.force !=0)
 	{
             if(atr.force > 0 )
 		X.fillStyle = "rgba(255, 0, 0, 0.1)";

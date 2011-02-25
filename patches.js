@@ -21,6 +21,10 @@ function patchArray(w,h)
 		if( pix[0] > 0 || pix[1] > 0 || pix[2] > 0 ){
 		   this.patches[x][y] = 1; 
 		}
+		else
+		{
+		    this.patches[x][y] = 0; 
+		}
 	    }
 	}
     }

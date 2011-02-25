@@ -13,6 +13,7 @@ w     remove walls
 o     stop viewing circles around attracors
 x     start/stop
 r     reset
+k     toggle kml layer
 
 -->
 
@@ -54,8 +55,8 @@ xml_done = function( ){
 var overlay;
 var ctx;
 var bb;
-var uiMode = { key:'president' }; //attractor is 'bomb' or 'president' or 'shooter'
-
+var uiMode = { key:'president', kml:'true' }; //attractor is 'bomb' or 'president' or 'shooter'
+var georssLayer;
 function initialize() {
     bb = boundingBox( polygons[0] );
     
@@ -79,12 +80,13 @@ function initialize() {
     overlay = new USGSOverlay(bounds, srcImage, map);
 
 
-    var georssLayer = new google.maps.KmlLayer('http://www.m0ose.com/javascripts/airportboundry.kml');
-    georssLayer.setMap(map);
+    georssLayer = new google.maps.KmlLayer('http://www.m0ose.com/javascripts/airportboundry.kml', { suppressInfoWindows: true, preserveViewport: false });
+    if( uiMode.kml)
+	georssLayer.setMap(map);
 
    
 }
-var e2=0;
+var e2 =0;
 window.onkeypress = function( e){
     e2 = e;
     var ch = String.fromCharCode( e.charCode );
@@ -99,9 +101,9 @@ window.onkeypress = function( e){
 	if( sim)
 	    sim._usingBoundry = !sim._usingBoundry;
     }
-    else if( ch =='o' && sim)
+    else if( ch =='o' && sim)//togle draw attractors
 	sim.drawAttractors = !sim.drawAttractors;
-    else if( ch =='x' && sim){
+    else if( ch =='x' && sim){//pause/start
 	if(!sim.running){
 	    sim.startSim();
 	}
@@ -109,11 +111,19 @@ window.onkeypress = function( e){
 	    sim.stopSim();
 	}
     }
-    else if( ch =='r' )
+    else if( ch =='r' )//reset
     {
 	xml_done();
     }
+    else if( ch =='k')//toggle kml layer
+    {
+	uiMode.kml = !uiMode.kml;
+	if( uiMode.kml)
+	    georssLayer.setMap( overlay.map_);
+	else
+	    georssLayer.setMap( null);
 
+    }
     
 
 }
