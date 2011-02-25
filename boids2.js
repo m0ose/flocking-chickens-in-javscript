@@ -88,14 +88,16 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
     
     this.move = function()
     {
-	var newvec = this.pos.clone();
-	newvec.x += newvec.vx * this.speed;
-	newvec.y += newvec.vy * this.speed;
-
-	if( newvec.x >= 0 && newvec.y >= 0 && newvec.x <= 1 && newvec.y <= 1)
+	if(  this.isMoveGood() )
 	{
+	    var newvec = this.pos.clone();
+	    newvec.x += newvec.vx * this.speed;
+	    newvec.y += newvec.vy * this.speed;
+	    
 	    this.pos = newvec;
 	}
+	//register where this chicken is now
+	this.mySimulator.myPatch.whatsAt( this.pos.x, this.pos.y ).occupants.push( this);
     }
 
     this.isMoveGood = function()
@@ -109,58 +111,62 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 
 	// it hit a walls
 	if( ! this.isMoveGood() )
-	{   
-	    this.pos.vx = -this.pos.vx
-	    if( !this.isMoveGood()){
-		this.pos.vy = -this.pos.vy
-		if( !this.isMoveGood()){
-	    		this.pos.vx = -this.pos.vx
-		}
-	    } 
+	{ 
+	    this.pos.vx = 2*Math.random() - 1;
+	    this.pos.vy = 2*Math.random() - 1;
 	}
-	else
+
+	if( this.isMoveGood())
 	{
 	    var forces = new vec(0,0,0,0);
 	    var tmpvec = new vec(0,0,0,0);
 	    var tmpdistance = 0;
-	    for(var i in this.mySimulator.flock)
+
+	    var biggerR = this.r_attract;
+	    if( this.r_repel > this.r_attract )
+		biggerR = this.r_repel;
+
+	    var chik;
+	    var myHood = this.mySimulator.myPatch.neighbors( this.pos.x, this.pos.y, biggerR) 
+	    for( var i in myHood )
 	    {
-		var chik = this.mySimulator.flock[i];
+		if( i >20)
+		    break;
+
+		chik = myHood[i];
 		tmpdistance = distance(chik, this);
 		
-		if( tmpdistance < this.r_repel && tmpdistance != 0 )//in repel distance
+		if( tmpdistance < this.r_repel && tmpdistance != 0)//in repel distance
 		{   
 		    //repel
-		    tmpvec.vx = this.pos.vx - chik.pos.vx;// oppisite direction of neighbor
-		    tmpvec.vy = this.pos.vy - chik.pos.vy;
-		    tmpvec.normalize();
+		    tmpvec.vx = this.pos.x - chik.pos.x;// oppisite direction of neighbor
+		    tmpvec.vy = this.pos.y - chik.pos.y;
+		    //tmpvec.normalize();
 		    
-		    forces.vx += tmpvec.vx* (tmpdistance/this.r_repel) * 5; /// Math.pow( tmpdistance, 2);
-		    forces.vy += tmpvec.vy* (tmpdistance/this.r_repel) * 5;  /// Math.pow( tmpdistance, 2);
+		    forces.vx +=tmpvec.vx* 100///( 1 - (tmpdistance/this.r_repel )  ); /// Math.pow( tmpdistance, 2);
+		    forces.vy +=tmpvec.vy* 100///( 1 - (tmpdistance/this.r_repel )  );  /// Math.pow( tmpdistance, 2);
+		   // if( tmpdistance < this.r_repel/2)
+			//this.speed = this.speed * 0.9;
 		}
-		else if( distance(chik, this) < this.r_attract )//attract distance
+		if( distance(chik, this) < this.r_attract )//attract distance
 		{
 		    //attract
 		    tmpvec.vx = chik.pos.x - this.pos.x;
 		    tmpvec.vy = chik.pos.y - this.pos.y;
 		    tmpvec.normalize();
-		    forces.vx += tmpvec.vx * (this.r_attract - tmpdistance) / 20; 
-		    forces.vy += tmpvec.vy * (this.r_attract - tmpdistance) / 20; 
+		    forces.vx += tmpvec.vx * (tmpdistance/ this.r_attract)/15 ; 
+		    forces.vy += tmpvec.vy * (tmpdistance/ this.r_attract)/15 ; 
 		    //follow
-		    forces.vx += chik.pos.vx * (this.r_attract - tmpdistance)/ this.r_attract; 
-		    forces.vy += chik.pos.vy * (this.r_attract - tmpdistance )/this.r_attract ;
-		    //match speed
-		    if( chik.speed < this.speed && this.speed > 0){
-			this.speed -= ( chik.speed - this.speed)/ 1024;
-		    }
-		}
-		
-		
+		    forces.vx += (chik.pos.vx * (tmpdistance/ this.r_attract))/5; 
+		    forces.vy += (chik.pos.vy * (tmpdistance /this.r_attract ))/5;
+		    
+		  //  }
+		}	
 	    }
 	    
 	    // ATTRACTORS AND REPULSORS
 	    for( var j in this.mySimulator.attractors)
-	    {
+ 	     {
 		var atr = this.mySimulator.attractors[j];
 		var dist = distance( atr.pos, this.pos);
 		
@@ -177,9 +183,7 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 			this.speed = this.speed;//this.average_speed * Math.sin( (dist / atr.radius));
 		    else// is reppelor
 		    {	
-			this.speed = this.average_speed /(Math.pow(dist / atr.radius, 2) )//this.average_speed * 5;//this.average_speed * Math.abs( atr.force );
-			if( this.speed > 4 * this.average_speed )
-			    this.speed = 4 * this.average_speed;
+			this.speed = this.average_speed /(Math.pow(dist / atr.radius, 2) )//this.average_speed * 5;//this.average_speed * Math.abs( atr.force );	
 		    }
 		}
 	    }
@@ -193,8 +197,30 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 		this.pos.normalize();
 	    }
 	}
-	// get speed closer to average speed
-	this.speed += (this.average_speed  - this.speed) / 10;
-	
     }
+    // get speed closer to average speed
+    if( this.speed > 4 * this.average_speed )
+	this.speed = 4 * this.average_speed;
+    this.speed += (this.average_speed  - this.speed) / 20;	
+    
+}
+
+
+
+//test function
+var _testlog = [];
+function testPatches( patch)
+{
+    if(!patch)
+	return;
+
+	for( var x=0;x < patch.width; x++)
+	{
+	    for( var y=0;  y < patch.height; y++)
+	    {
+
+		if( patch.patches[x][y].occupants.length > 0 )
+		    _testlog.push( " ("+x+","+y+")  ") ;
+	    }
+	}
 }

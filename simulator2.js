@@ -2,12 +2,12 @@ function simulator()
 { 
     //chicken related variables
     //DEFAULT VALUES
-    this.flockSize = 80;
-    this.repelRadius = 0.03;
-    this.attractRadius = 0.05;
+    this.flockSize = 300;
+    this.repelRadius = 0.015;
+    this.attractRadius = 0.03;
     this.radiusVariation = 0.001;
     this.speedVariation = 0.0001;
-    this.speed = 0.00015;
+    this.speed = 0.0015;
     this.drawRadii = false;
     this.drawAttractors = true;
     this.running = false;
@@ -22,7 +22,7 @@ function simulator()
     this._usingBoundry = false;
     this._sim_log = "";
     this.simContext = null;
-    this.patch = null;
+    this.myPatch = null;
  
 
     this.startSim = function( flockSize, repelRadius, attractRadius, radiusVariation,speed,speedVariation)
@@ -31,7 +31,7 @@ function simulator()
 	if(!this.flock || this.flock.length == 0)
 	    this.initSim( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation);
 	this._draw_interval = setInterval( drawEm, 50, this);
-	this._iter_interval = setInterval ( this.iterate, 20);
+	this._iter_interval = setInterval ( iterateFunc, 1,this);
 	this.running = true;
     }
     this.stopSim = function()
@@ -76,16 +76,10 @@ function simulator()
 	if(speed)
 	    this.speed = speed;
 
-
-	try{
-	    if( patches && patches.patches )
-		usingBoundry = true;
+	if( !this.myPatch){
+	    var patchesEmpty = new patchArray(100,100);
+	    this.attachBoundry( patchesEmpty);
 	}
-	catch(e)
-	{
-	    this._sim_log += "boundry not found . not using mapped boundry ";	
-	}
-	
 
 	this.flock = [];
 	this.attractors = [];
@@ -98,7 +92,7 @@ function simulator()
 	    if(this._usingBoundry){
 		var x = Math.random();
 		var y = Math.random();
-		while( !patches.isInBounds(x,y) )
+		while( !this.myPatch.isInBounds(x,y)  )
 		{
 		    x += 1/41;
 		    y += 1/71;
@@ -127,22 +121,6 @@ function simulator()
     }
 
 
-    this.iterate = function()
-    {
-
-	// move em around
-	for( i in this.flock)
-	{
-	    var bird = this.flock[i];
-	    bird.applyForces();
-	}
-	for( i in this.flock)
-	{
-	    var bird = this.flock[i];
-	    bird.move();
-	}
-    }
-
    
     this.isMoveGood = function( aChik)
     {
@@ -153,7 +131,7 @@ function simulator()
 	{
 	    var lox = (aChik.pos.x + aChik.pos.vx * aChik.speed)  ;
 	    var loy = (aChik.pos.y + aChik.pos.vy * aChik.speed)  ;	    
-	    if( this.patch.whatsAt(lox,loy) == 0 ){
+	    if( this.myPatch.isInBounds(lox,loy) == 0 ){
 		return false;
 	    }
 	}
@@ -177,13 +155,28 @@ function simulator()
     
     this.attachBoundry  = function( patchIn )
     {
-	this.patch = patchIn;
+	this.myPatch = patchIn;
 	this._usingBoundry = true;
     }
 }
 
 
-
+function iterateFunc( simu)
+{
+    
+    // move em around
+    for( i in simu.flock)
+    {
+	var bird = simu.flock[i];
+	bird.applyForces();
+    }
+    simu.myPatch.cleanHood();
+    for( i in simu.flock)
+    {
+	var bird = simu.flock[i];
+	bird.move();
+    }
+}
 function drawEm( simu)
 {
     //simu._sim_log = "drawer called";
@@ -195,10 +188,7 @@ function drawEm( simu)
     var X = simu.simContext;
     var Wid = X.canvas.width;
     var Hei = X.canvas.height;
-    //clear screen
-   // X.fillStyle = "rgba(0,0,0,0.8)";
-    //X.fillRect( 0,0, Wid, Hei);
-    //X.fill();  
+   
     X.clearRect( 0,0, Wid, Hei);
     
     //bird color

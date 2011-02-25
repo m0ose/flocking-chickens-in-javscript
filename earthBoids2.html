@@ -1,13 +1,14 @@
 <html>
 <head>
 <script src="js_ajax.js"></script>
+<script src="patches.js"></script>
 <script src="fetchXML.js"></script>
 <script src="boids2.js"></script>
 <script src="simulator2.js"></script>
 
 <script>
 ajax(0);
-    var patches ;
+    var patches3 ;
 xml_done = startSim;//js_ajax calls xml_done when it finishes
 var sim = null;
 function runAll()
@@ -16,8 +17,8 @@ function runAll()
     if( !sim)
 	sim = new simulator();
     
-    patches = new patchArray(60,60);
-    sim.attachBoundry( patches);
+    patches3 = new patchArray(60,60);
+    sim.attachBoundry( patches3);
    
     sim.startSim();
     sim.attatchToCanvas( document.getElementById('_bird_canvas'))
