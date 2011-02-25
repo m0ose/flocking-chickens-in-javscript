@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-<title>Google Maps JavaScript API v3 Example: Overlay Simple</title>
+<title>flocking on google maps v3</title>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script src="js_ajax.js"></script>
@@ -34,8 +34,8 @@ xml_done = function( ){
 
 var overlay;
 var ctx;
-var _sw = { lat:33.43733935717403 ,  lon:-112.0276229510615 };
 var bb;
+var uiMode = { key:'president' }; //attractor is 'bomb' or 'president' or 'shooter'
 
 function initialize() {
     bb = boundingBox( polygons[0] );
@@ -62,8 +62,42 @@ function initialize() {
 
     var georssLayer = new google.maps.KmlLayer('http://www.m0ose.com/javascripts/airportboundry.kml');
     georssLayer.setMap(map);
-}
 
+   
+}
+var e2=0;
+window.onkeypress = function( e){
+    e2 = e;
+    var ch = String.fromCharCode( e.charCode );
+    ch = ch.toLowerCase();
+    if( ch == 'b')//bomb mode
+	uiMode.key = 'bomb';
+    else if( ch == 'p')
+	uiMode.key = 'president';
+    else if( ch == 's')
+	uiMode.key = 'shooter';
+    else if( ch =='w'){//remove the walls
+	if( sim)
+	    sim._usingBoundry = !sim._usingBoundry;
+    }
+    else if( ch =='o' && sim)
+	sim.drawAttractors = !sim.drawAttractors;
+    else if( ch =='x' && sim){
+	if(!sim.running){
+	    sim.startSim();
+	}
+	else{
+	    sim.stopSim();
+	}
+    }
+    else if( ch =='r' )
+    {
+	xml_done();
+    }
+
+    
+
+}
 </script>
     </head>
 <body>

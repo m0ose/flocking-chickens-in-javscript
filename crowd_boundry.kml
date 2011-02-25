@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>crowd_boundry.kml</name>
+	<Style id="sh_ylw-pushpin">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff0000ff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80ff0007</color>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<color>ff0000ff</color>
+		</LineStyle>
+		<PolyStyle>
+			<color>80ff0007</color>
+		</PolyStyle>
+	</Style>
+	<StyleMap id="msn_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>croud boundry</name>
+		<description>the boundry of the crowd to look at an airplane</description>
+		<LookAt>
+			<longitude>-112.0205479637772</longitude>
+			<latitude>33.43793462937843</latitude>
+			<altitude>0</altitude>
+			<heading>0.01784782260061815</heading>
+			<tilt>0</tilt>
+			<range>324.4758822244517</range>
+			<altitudeMode>relativeToGround</altitudeMode>
+			<gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+		</LookAt>
+		<styleUrl>#msn_ylw-pushpin</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-112.0207602701561,33.43823778272863,0 -112.0210489970771,33.43824603920719,0 -112.0211625770749,33.43824338668469,0 -112.0213670260226,33.43820285536382,0 -112.0213507833599,33.43818389091317,0 -112.021380003263,33.43816495388348,0 -112.0214222418278,33.43816227319876,0 -112.0214644544615,33.43819207801571,0 -112.0215651644655,33.4381840115724,0 -112.0217014739394,33.43812718116457,0 -112.0217471447248,33.43776161655485,0 -112.0214387737893,33.43772906166614,0 -112.0212407562807,33.4377317414256,0 -112.0212179335617,33.43787794786505,0 -112.0212080762042,33.43805661724485,0 -112.0207603410692,33.43805917406923,0 -112.0207602701561,33.43823778272863,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>

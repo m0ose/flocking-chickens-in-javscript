@@ -28,12 +28,6 @@ USGSOverlay.prototype.onAdd = function() {
     div.style.borderWidth = "0px";
     div.style.position = "absolute";
     
-    // Create an IMG element and attach it to the DIV.
-    // var img = document.createElement("img");
-    //img.src = this.image_;
-    //img.style.width = "100%";
-    //img.style.height = "100%";
-    //div.appendChild(img);
     
     //put some other canvas stuff in 
     var canvas = document.createElement("canvas");
@@ -43,8 +37,20 @@ USGSOverlay.prototype.onAdd = function() {
    //add a mouse repulsive thing
     canvas.onmousedown = function(e){
 	event_tmp = e;
-	sim.attractors[0].pos.x = e.offsetX/canvas.width;
-	sim.attractors[0].pos.y = e.offsetY/canvas.height;	
+	if( uiMode.key == 'president' )
+	{
+	    sim.attractors[0] = new attractor( 0.1,0.5, 5,0.4) ;
+	    sim.attractors[0].pos.x = e.offsetX/canvas.width;
+	    sim.attractors[0].pos.y = e.offsetY/canvas.height;	
+	}
+	else if	( uiMode.key == 'bomb' )
+	{  
+	    sim.attractors.push(new attractor( e.offsetX/canvas.width ,  e.offsetY/canvas.height, -10 ,0.1)) ;
+	}
+	else if	( uiMode.key == 'shooter' )
+	{  
+	    sim.attractors[1] = new attractor( e.offsetX/canvas.width ,  e.offsetY/canvas.height, -10 ,0.2) ;
+	}
     }
   
     

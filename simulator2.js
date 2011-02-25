@@ -1,5 +1,19 @@
 function simulator()
 { 
+    //chicken related variables
+    //DEFAULT VALUES
+    this.flockSize = 60;
+    this.repelRadius = 0.03;
+    this.attractRadius = 0.05;
+    this.radiusVariation = 0.001;
+    this.speedVariation = 0.0001;
+    this.speed = 0.00015;
+    this.drawRadii = false;
+    this.drawAttractors = true;
+    this.running = false;
+    
+    //
+    //
     //simulation related variables
     this._iter_interval = null;
     this._draw_interval = null;
@@ -9,29 +23,26 @@ function simulator()
     this._sim_log = "";
     this.simContext = null;
     this.patch = null;
-    //chicken related variables
-    this.flockSize;
-    this.repelRadius;
-    this.attractRadius;
-    this.radiusVariation;
-    this.speed;
-    this.speedVariation;
-    
+ 
 
     this.startSim = function( flockSize, repelRadius, attractRadius, radiusVariation,speed,speedVariation)
     {
-	//var _mySelf = this;
-	this.initSim( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation);
-	this.stopSim();
+	this.stopSim();//this should be first
+	if(!this.flock || this.flock.length == 0)
+	    this.initSim( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation);
 	this._draw_interval = setInterval( drawEm, 50, this);
-	this._iter_interval = setInterval ( this.iterate, 1);
+	this._iter_interval = setInterval ( this.iterate, 20);
+	this.running = true;
     }
     this.stopSim = function()
     {
-	if( this._iter_interval)
+	if( this._iter_interval){
 	    clearInterval( this._iter_interval);
-	if( this._draw_interval)
+	}
+	if( this._draw_interval){
 	    clearInterval( this._draw_interval);
+	}
+	this.running = false;
     }
 //this makes a new canvas or attatches the drawing to a canvas
     this.attatchToCanvas = function( aCanvas)
@@ -52,25 +63,20 @@ function simulator()
     }
     this.initSim = function( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation)
     {
-	this.flockSize = flockSize;
-	this.repelRadius = repelRadius;
-	this.attractRadius=attractRadius;
-	this.radiusVariation=radiusVariation;
-	this.speed=speed;
-	this.speedVariation=speedVariation;
+	if( flockSize)
+	    this.flockSize = flockSize;
+	if(repelRadius)
+	    this.repelRadius = repelRadius;
+	if(attractRadius)
+	    this.attractRadius = attractRadius;
+	if(radiusVariation)
+	    this.radiusVariation = radiusVariation;
+	if(speedVariation)
+	    this.speedVariation = speedVariation;
+	if(speed)
+	    this.speed = speed;
 
-	if( !flockSize)
-	    this.flockSize = 30;
-	if(!repelRadius)
-	    this.repelRadius = 0.03;
-	if(!attractRadius)
-	    this.attractRadius = 0.05;
-	if(!radiusVariation)
-	    this.radiusVariation = 0.001;
-	if(!speedVariation)
-	    this.speedVariation = 0.001;
-	if(!speed)
-	    this.speed = 0.00015;
+
 	try{
 	    if( patches && patches.patches )
 		usingBoundry = true;
@@ -80,10 +86,9 @@ function simulator()
 	    this._sim_log += "boundry not found . not using mapped boundry ";	
 	}
 	
-	if(!this.flock)
-	{
-	    this.flock = [];
-	}
+
+	this.flock = [];
+	this.attractors = [];
 	//
 	// POPULATE THE FLOCK
 	while( this.flock.length > this.flockSize){
@@ -111,9 +116,9 @@ function simulator()
 	flock = this.flock;
 	//
 	//add some attractors
-	this.attractors.push( new attractor( 0.1,0.5, -100,0.3) );
-	this.attractors.push( new attractor( 0.5,0.6, 0.05,0.2) );
-	this.attractors.push( new attractor( 1.5,0.6, 0.005,2) );
+	this.attractors.push( new attractor( 0.1,0.5, -1,0.3) );
+	//this.attractors.push( new attractor( 0.5,0.6, 0.05,0.2) );
+	//this.attractors.push( new attractor( 1.5,0.6, 0.005,2) );
 	
 
 
@@ -209,38 +214,52 @@ function drawEm( simu)
 	X.moveTo(bx*Wid, by * Hei);
 	X.arc(bx*Wid,by*Hei, 4 , 0 , __twopi, true);
 	X.fill();
-	
-	X.strokeStyle = "green";
-	X.moveTo( bx * Wid + bird.r_attract * Wid, by*Hei); 
-	X.arc(bx*Wid, by*Hei, bird.r_attract * Wid , 0 , __twopi, true);
 	X.stroke();
 	X.closePath()
-	X.beginPath();
-	X.strokeStyle = "tan";
-	X.moveTo( bx * Wid + bird.r_repel * Wid, by*Hei); 
-	X.arc(bx*Wid, by*Hei, bird.r_repel * Wid , 0 , __twopi, true);
-	
+	if(simu.drawRadii)
+	{
+	    X.strokeStyle = "green";
+	    X.moveTo( bx * Wid + bird.r_attract * Wid, by*Hei); 
+	    X.arc(bx*Wid, by*Hei, bird.r_attract * Wid , 0 , __twopi, true);
+	    X.stroke();
+	    X.closePath()
+	    X.beginPath();
+	    X.strokeStyle = "tan";
+	    X.moveTo( bx * Wid + bird.r_repel * Wid, by*Hei); 
+	    X.arc(bx*Wid, by*Hei, bird.r_repel * Wid , 0 , __twopi, true);
+	}
 	X.stroke();
 	X.closePath();
     }
     
+  
     for( i in simu.attractors)
     {
         var atr = simu.attractors[i];
-        X.beginPath();
+	//draw the center        
         if(atr.force > 0 )
-	    X.fillStyle = "rgba(255, 0, 0, 0.1)";// put black rectangle down
+	    X.fillStyle = "rgba(255, 0, 0, 1.0)";
         else
-	    X.fillStyle = "rgba(0,0,255, 0.1)";// put black rectangle down
-	
-        X.strokeStyle = "red";
-        X.moveTo( atr.pos.x * Wid + atr.radius * Wid, atr.pos.y*Hei); 
-        X.arc(atr.pos.x*Wid,atr.pos.y*Hei, atr.radius * Wid , 0 , __twopi, true);
-        X.stroke();
-        X.fill();
-        X.closePath();
+	    X.fillStyle = "rgba(0,0,255, 1.0)";
+	X.fillRect (atr.pos.x * Wid , atr.pos.y*Hei, 10, 10) ;
+	//draw the ring of influence
+	if( simu.drawAttractors)
+	{
+            if(atr.force > 0 )
+		X.fillStyle = "rgba(255, 0, 0, 0.1)";
+            else
+		X.fillStyle = "rgba(0,0,255, 0.1)";
+	    X.beginPath();
+            X.strokeStyle = "red";
+            X.moveTo( atr.pos.x * Wid + atr.radius * Wid, atr.pos.y*Hei); 
+            X.arc(atr.pos.x*Wid,atr.pos.y*Hei, atr.radius * Wid , 0 , __twopi, true);	    
+            X.stroke();
+            X.fill();
+            X.closePath();
+	}
     }
-    
+ 
+
 }
 
   
