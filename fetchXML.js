@@ -109,7 +109,7 @@ function drawPolygon()
     }
     else{
 	canvas_polygon = document.createElement('canvas');
-	document.body.appendChild(canvas_polygon).id = '_can';
+	//document.body.appendChild(canvas_polygon).id = '_can';
     }
 
    // document.getElementById("_can") = canvas;//comment out if this is to be invisible 

@@ -128,6 +128,7 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 
 	    var chik;
 	    var myHood = this.mySimulator.myPatch.neighbors( this.pos.x, this.pos.y, biggerR) 
+	    var imReppeling = false;
 	    for( var i in myHood )
 	    {
 		if( i >20)
@@ -138,6 +139,7 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 		
 		if( tmpdistance < this.r_repel && tmpdistance != 0)//in repel distance
 		{   
+		    imReppeling = true;
 		    //repel
 		    tmpvec.vx = this.pos.x - chik.pos.x;// oppisite direction of neighbor
 		    tmpvec.vy = this.pos.y - chik.pos.y;
@@ -145,8 +147,7 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 		    
 		    forces.vx +=tmpvec.vx* 100///( 1 - (tmpdistance/this.r_repel )  ); /// Math.pow( tmpdistance, 2);
 		    forces.vy +=tmpvec.vy* 100///( 1 - (tmpdistance/this.r_repel )  );  /// Math.pow( tmpdistance, 2);
-		   // if( tmpdistance < this.r_repel/2)
-			//this.speed = this.speed * 0.9;
+		  
 		}
 		if( distance(chik, this) < this.r_attract )//attract distance
 		{
@@ -165,42 +166,46 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 	    }
 	    
 	    // ATTRACTORS AND REPULSORS
-	    for( var j in this.mySimulator.attractors)
- 	     {
-		var atr = this.mySimulator.attractors[j];
-		var dist = distance( atr.pos, this.pos);
-		
-		if( dist <= atr.radius)
-		{
-		    tmpvec.vx = atr.pos.x - this.pos.x;
-		    tmpvec.vy = atr.pos.y - this.pos.y;
-		    tmpvec.normalize();
-		    forces.vx += tmpvec.vx * atr.force * ( dist/atr.radius);
-		    forces.vy += tmpvec.vy * atr.force * (dist/atr.radius);
+	    //if( !imReppeling)
+	    {
+		for( var j in this.mySimulator.attractors)
+ 		{
+		    var atr = this.mySimulator.attractors[j];
+		    var dist = distance( atr.pos, this.pos);
 		    
-		    //speed
-		    if(atr.force > 0 )// is attractor
-			this.speed = this.speed;//this.average_speed * Math.sin( (dist / atr.radius));
-		    else// is reppelor
-		    {	
-			this.speed = this.average_speed /(Math.pow(dist / atr.radius, 2) )//this.average_speed * 5;//this.average_speed * Math.abs( atr.force );	
+		    if( dist <= atr.radius)
+		    {
+			tmpvec.vx = atr.pos.x - this.pos.x;
+			tmpvec.vy = atr.pos.y - this.pos.y;
+			tmpvec.normalize();
+			forces.vx += tmpvec.vx * atr.force/10;// * ( dist/atr.radius);
+			forces.vy += tmpvec.vy * atr.force/10;// * ( dist/atr.radius);
+			
+			//speed
+			if(atr.force > 0 ){// is attractor
+			    this.speed = this.speed;//this.average_speed * Math.sin( (dist / atr.radius));
+			}
+			else// is reppelor
+			{	
+			    this.speed = this.average_speed /(Math.pow(dist / atr.radius, 2) )//this.average_speed * 5;//this.average_speed * Math.abs( atr.force );	
+			}
 		    }
 		}
 	    }
 	    //forces.normalize();
 	    
-	    {
-		forces.normalize();
-		
-		this.pos.vx += forces.vx;
-		this.pos.vy += forces.vy;
-		this.pos.normalize();
-	    }
+	    
+	    forces.normalize();
+	    
+	    this.pos.vx += forces.vx;
+	    this.pos.vy += forces.vy;
+	    this.pos.normalize();
+	    
 	}
     }
-    // get speed closer to average speed
-    if( this.speed > 4 * this.average_speed )
-	this.speed = 4 * this.average_speed;
+    // set speed closer to average speed
+    if( this.speed > 3 * this.average_speed )
+	this.speed = 3 * this.average_speed;
     this.speed += (this.average_speed  - this.speed) / 20;	
     
 }

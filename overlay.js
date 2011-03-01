@@ -4,7 +4,7 @@ function USGSOverlay(bounds, image, map) {
     
     // Now initialize all properties.
     this.bounds_ = bounds;
-    this.image_ = image;
+    //this.image_ = image;
     this.map_ = map;
     this.overlayProjection = null;
     // We define a property to hold the image's div. We'll 
@@ -39,7 +39,7 @@ USGSOverlay.prototype.onAdd = function() {
 	event_tmp = e;
 	if( uiMode.key == 'president' )
 	{
-	    sim.attractors[0] = new attractor( 0.1,0.5, 5,0.4) ;
+	    sim.attractors[0] = new attractor( 0.1,0.5, 1.0,0.4) ;
 	    sim.attractors[0].pos.x = e.offsetX/canvas.width;
 	    sim.attractors[0].pos.y = e.offsetY/canvas.height;	
 	}
@@ -74,13 +74,13 @@ USGSOverlay.prototype.draw = function() {
     // Size and position the overlay. We use a southwest and northeast
     // position of the overlay to peg it to the correct position and size.
     // We need to retrieve the projection from this overlay to do this.
-    overlayProjection = this.getProjection();
+    this.overlayProjection = this.getProjection();
     
     // Retrieve the southwest and northeast coordinates of this overlay
     // in latlngs and convert them to pixels coordinates.
     // We'll use these coordinates to resize the DIV.
-    var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
-    var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+    var sw = this.overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+    var ne = this.overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
     
     // Resize the image's DIV to fit the indicated dimensions.
     var div = this.div_;
@@ -99,3 +99,4 @@ USGSOverlay.prototype.onRemove = function() {
     this.div_.parentNode.removeChild(this.div_);
     this.div_ = null;
 }
+

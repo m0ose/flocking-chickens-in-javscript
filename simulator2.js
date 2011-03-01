@@ -2,7 +2,7 @@ function simulator()
 { 
     //chicken related variables
     //DEFAULT VALUES
-    this.flockSize = 300;
+    this.flockSize = 150;
     this.repelRadius = 0.015;
     this.attractRadius = 0.03;
     this.radiusVariation = 0.001;
@@ -200,12 +200,12 @@ function drawEm( simu)
 	var bx = bird.pos.x;
 	var by =  bird.pos.y;
 	//draw bird
+	X.strokeStyle = "green";
 	X.beginPath();
 	X.moveTo(bx*Wid, by * Hei);
 	X.arc(bx*Wid,by*Hei, 4 , 0 , __twopi, true);
 	X.fill();
-	X.stroke();
-	X.closePath()
+
 	if(simu.drawRadii)
 	{
 	    X.strokeStyle = "green";
@@ -217,8 +217,10 @@ function drawEm( simu)
 	    X.strokeStyle = "tan";
 	    X.moveTo( bx * Wid + bird.r_repel * Wid, by*Hei); 
 	    X.arc(bx*Wid, by*Hei, bird.r_repel * Wid , 0 , __twopi, true);
+	    X.stroke();
+
 	}
-	X.stroke();
+
 	X.closePath();
     }
     

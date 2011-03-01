@@ -1,29 +1,40 @@
-<!--
-FLOCKING ON GOOGLE MAPS
-   Cody Smith. feb 2010
-
-this is a flocking model put inside of a kml rectangle on google maps version 3.
-All of the default values are stored in simulator2.js
-
-keys:
-p     put down an attractor,president mode
-b     bomb mode
-s     shooter mode
-w     remove walls
-o     stop viewing circles around attracors
-x     start/stop
-r     reset
-k     toggle boundry kml layer
-1..9  toggle kml layers in _kmlLayers array;
-
--->
-
-
-<!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <script type="text/javascript" src="swfobject.js"></script>
+        <style>
+          body {
+            padding: 0px;
+            margin: 0px;
+          }
+        </style>
+<script>
+calibrateDone = function()
+{
+//
+//MINIMIZE THE FLASH STUFF
+var las = document.getElementById('laserToJS');
+var fv = document.getElementById('flashMovie');
+
+//alert( las);
+las.width = 0;
+las.height = 0;
+fv.width = 0;
+fv.height = 0;
+}
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
 <title>flocking on google maps v3</title>
 <link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -49,10 +60,8 @@ xml_done = function( ){
     
     sim.startSim();
     
- 
-
-
 };
+
 
 var kmlLayer = function( url )
 {
@@ -67,7 +76,7 @@ var kmlLayer = function( url )
 //  the index should be between 1 and 9
 var _kmlLayers = [ null ,
 		   new kmlLayer('http://www.m0ose.com/javascripts/crowd_boundry.kml'),
-		   new kmlLayer('http://www.m0ose.com/kml/PheonixDOT.kml?'+Math.floor(Math.random()*10000) )
+		   new kmlLayer('http://www.m0ose.com/kml/PheonixDOT.kml')
 ]
 //
 // ----------------------------
@@ -75,16 +84,13 @@ var _kmlLayers = [ null ,
 
 
 
+
+var laserLoc = { x:0, y:0};
 var overlay;
 var ctx;
 var bb;
-var uiMode = { key:'president', kml:'false' }; //attractor is 'bomb' or 'president' or 'shooter'
+var uiMode = { key:'president', kml:'true' }; //attractor is 'bomb' or 'president' or 'shooter'
 var georssLayer;
-
-
-
-
-
 function initialize() {
     bb = boundingBox( polygons[0] );
     
@@ -114,9 +120,9 @@ function initialize() {
 
    
 }
-var e2 =0;
+//var e2 =0;
 window.onkeypress = function( e){
-    e2 = e;
+   // e2 = e;
     var ch = String.fromCharCode( e.charCode );
     ch = ch.toLowerCase();
     if( ch == 'b')//bomb mode
@@ -152,7 +158,7 @@ window.onkeypress = function( e){
 	    georssLayer.setMap( null);
 
     }
-    else if( Number(ch) )
+    else if( Number(ch) )//a number turns on a layer
     {	
 	var indexL = Number(ch); 
 	if( _kmlLayers[ indexL] )
@@ -165,42 +171,85 @@ window.onkeypress = function( e){
 	}
     }
     
-    
+   
 
 }
 
+var _laserlog =""
 function LatLng2sim( latlon)
 {
-    var x = latlon.Ba - bb.x;
-    var y = latlon.za - bb.y;
+    var x = latlon.Da - bb.x;
+    var y = latlon.Ba - bb.y;
     x = x / bb.width;
     y = y / bb.width;
     return {x:x, y:y};
 }
-
-var _laserlog =""
+var tmpll;
 function laserPointer( lx, ly)
 {
-    var tmpll = overlay.overlayProjection.fromContainerPixelToLatLng( new google.maps.Point(lx,ly) );
-    var divxy = overlay.overlayProjection.fromLatLngToDivPixel(  tmpll )
+    var scrX = lx * document.width;
+    var scrY = ly * document.height;
 
-    _laserlog += ( "\n laser pointer  " + lx + "," + ly + " . canvas coord " + divxy.x +" , " +divxy.y );
-    //alert( _laserlog);
+    tmpll = overlay.overlayProjection.fromContainerPixelToLatLng( new google.maps.Point(scrX, scrY) );
+    var llsim = LatLng2sim( tmpll);
+    _laserlog += ( "\n laser pointer  " + lx + "," + ly + " . container coord " + tmpll.Ba +" , " +tmpll.Da + " sim coord : " + llsim.x + "," + llsim.y);
+
     if( uiMode.key =='president'){
-	sim.attractors[0] = new attractor( 1,0.5, 1.0,0.4) ;
-	sim.attractors[0].pos.x = lx;
-	sim.attractors[0].pos.y = ly;	
+	sim.attractors[0] = new attractor( llsim.x , 1 - llsim.y, 1.0,0.4) ;//the llsim.y is revesed for some reason TODO
+	//sim.attractors[0] = new attractor( 1,0.5, 1.0,0.4) ;
+	//sim.attractors[0].pos.x = lx;
+//	sim.attractors[0].pos.y = ly;	
     }
 }
-function callibrateDone()
-{
-  alert( " gray code callibration is done ");
-//minimize here
-}
+
 
 </script>
-    </head>
+
+
+
+
+
+
+</head>
+
 <body>
-  <div id="map_canvas"></div>
+
+
+            <object
+                classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+                width="100%" height="100%" id="laserToJS"  >
+                <param name="movie" value="laserToJS.swf" />
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#ffffff" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowFullScreen" value="true" />
+                <!--[if !IE]>-->
+                <object type="application/x-shockwave-flash"
+                data="laser2JS.swf" width="100%" height="100%" id="flashMovie">
+                    <param name="quality" value="high" />
+                    <param name="bgcolor" value="#ffffff" />
+                    <param name="allowScriptAccess" value="sameDomain" />
+                    <param name="allowFullScreen" value="true" />
+                <!--<![endif]-->
+                <!--[if gte IE 6]>-->
+                	<p> 
+                		Either scripts and active content are not permitted to run or Adobe Flash Player version
+                		10.0.0 or greater is not installed.
+                	</p>
+                <!--<![endif]-->
+                    <a href="http://www.adobe.com/go/getflashplayer">
+                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+                    </a>
+                <!--[if !IE]>-->
+                </object>
+                <!--<![endif]-->
+            </object>
+
+
+
+<div id="map_canvas"></div>
+
+hello everybody	. I DON'T THINK THE CAMERA IS WORKING WITH CHROME.	
+
 </body>
 </html>

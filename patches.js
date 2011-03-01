@@ -59,8 +59,8 @@ function patchArray(w,h)
 
     this.whatsAt = function(x,y)
     {
-	var x2 = Math.floor( x * this.width);
-	var y2 = Math.floor( y * this.height);
+	var x2 = Math.round( x * this.width);
+	var y2 = Math.round( y * this.height);
 	if(x2 < this.width && y2 < this.height && x2 >= 0 && y2 >= 0)
 	    return this.patches[x2][y2];
 	return new aPatch(0);
