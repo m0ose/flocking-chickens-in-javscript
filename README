@@ -22,5 +22,33 @@ files :
 
       Boids2.html   just the flocking simulator
       overlayTest.html  the flocking with an extra kml layer boundry
-      embedTest.html   the flocking kml and laser pointer tracking
+      earthBoids.html     flocking with kml and google maps v3
+      embedTest.html   the flocking, kml, maps, and laser pointer tracking
+
+
+      all files:
+          PheonixDOT.kml       web cameras from the DOT	
+          boids2.js	       the chicken class
+          earthBoids2.html     test with google earth
+          fetchXML.js          get the kml for the boundry
+          overlay.js           classes for reading kml
+          README	   
+          boids1.html          old file 
+          embedTest.html       the flocking, kml, maps, and laser pointer tracking
+          js_ajax.js	       actually fetches kml
+          overlayTest.html     the flocking with an extra kml layer boundry
+          simulator2.js        the simulator class
+          boids1.js            old
+          crowd_boundry.kml    another kml
+          laser2js.swf	       flash file for laser tracking.
+          patches.js	       patches for storing neighbors
+          swfobject.js         used for embedding flash
+          airportboundry.kml   main boundry
+          boids2.html	       just runs the simulator
+          earthBoids.html      flocking with kml and google maps v3
+          fetchXML.html	       fetches and draws kml without google maps
+          laserToJS.swf_old.swf  old
+          simulator.js	        old
+          tests.js             some tests
+    
    
