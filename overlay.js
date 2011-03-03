@@ -39,7 +39,7 @@ USGSOverlay.prototype.onAdd = function() {
 	event_tmp = e;
 	if( uiMode.key == 'president' )
 	{
-	    sim.attractors[0] = new attractor( 0.1,0.5, 1.0,0.4) ;
+	    sim.attractors[0] = new attractor( 0.1,0.5, 2.0,0.4) ;
 	    sim.attractors[0].pos.x = e.offsetX/canvas.width;
 	    sim.attractors[0].pos.y = e.offsetY/canvas.height;	
 	}

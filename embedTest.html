@@ -182,8 +182,8 @@ function LatLng2sim( latlon)
     var y = latlon.Ba - bb.y;
     x = x / bb.width;//this should be adjusted for latitude
     y = y / bb.width;
-    if(latlon.Ba < 90 && latlon.Ba > -90)
-	x=x/Math.cos( latlon.Ba * (Math.PI/180) );
+    //if(latlon.Ba < 90 && latlon.Ba > -90)
+//	x=x/Math.cos( latlon.Ba * (Math.PI/180) );
     return {x:x, y:y};
 }
 
@@ -200,10 +200,10 @@ function laserPointer( lx, ly)
 	sim.attractors[0] = new attractor( llsim.x , 1 - llsim.y, 2.0,0.6) ;//the llsim.y is revesed for some reason TODO
     }
     if( uiMode.key =='shooter'){
-	sim.attractors[1] = new attractor( llsim.x , 1 - llsim.y, -4.0,0.4) ;//the llsim.y is revesed for some reason TODO
+	sim.attractors[1] = new attractor( llsim.x , 1 - llsim.y, -14.0,0.4) ;//the llsim.y is revesed for some reason TODO
     }
     if( uiMode.key =='bomb'){
-	sim.attractors.push(new attractor( llsim.x , 1 -llsim.y,-4.0,0.1) );
+	sim.attractors.push(new attractor( llsim.x , 1 -llsim.y,-14.0,0.1) );
 	while( sim.attractors.length > 32 ){
 	    sim.attractors.splice(1,1);
 	}
