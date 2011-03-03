@@ -2,12 +2,12 @@ function simulator()
 { 
     //chicken related variables
     //DEFAULT VALUES
-    this.flockSize = 150;
-    this.repelRadius = 0.015;
+    this.flockSize = 250;
+    this.repelRadius = 0.01;//0.015
     this.attractRadius = 0.03;
-    this.radiusVariation = 0.001;
-    this.speedVariation = 0.0001;
-    this.speed = 0.0015;
+    this.radiusVariation = 0.007;
+    this.speedVariation = 0.0000;
+    this.speed = 0.0006;
     this.drawRadii = false;
     this.drawAttractors = true;
     this.running = false;
@@ -31,7 +31,7 @@ function simulator()
 	if(!this.flock || this.flock.length == 0)
 	    this.initSim( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation);
 	this._draw_interval = setInterval( drawEm, 50, this);
-	this._iter_interval = setInterval ( iterateFunc, 1,this);
+	this._iter_interval = setInterval ( iterateFunc, 20,this);
 	this.running = true;
     }
     this.stopSim = function()
@@ -59,6 +59,7 @@ function simulator()
 	    this.simContext = aCanvas.getContext("2d");
 	}
 	//this.simContext = Z.getContext("2d");
+
 	return aCanvas;
     }
     this.initSim = function( flockSize,repelRadius, attractRadius, radiusVariation,speed, speedVariation)

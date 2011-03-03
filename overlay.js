@@ -35,7 +35,7 @@ USGSOverlay.prototype.onAdd = function() {
     sim.attatchToCanvas( canvas);
     div.appendChild(canvas);
    //add a mouse repulsive thing
-    canvas.onmousedown = function(e){
+    canvas.onclick = function(e){
 	event_tmp = e;
 	if( uiMode.key == 'president' )
 	{
@@ -92,7 +92,7 @@ USGSOverlay.prototype.draw = function() {
     var flock_can = document.getElementById('_flock_canvas');
     flock_can.width = (Math.abs(ne.x - sw.x));
     flock_can.height = (Math.abs(sw.y - ne.y));
-    
+    drawEm(sim);
 }
 
 USGSOverlay.prototype.onRemove = function() {

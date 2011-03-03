@@ -203,10 +203,14 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 	    
 	}
     }
+    this.pos.normalize();
     // set speed closer to average speed
-    if( this.speed > 3 * this.average_speed )
-	this.speed = 3 * this.average_speed;
-    this.speed += (this.average_speed  - this.speed) / 20;	
+    this.speed += (this.average_speed  - this.speed) / 10;	
+
+    if( this.speed >( 1.4 * this.average_speed) )
+	this.speed = 1.4 * this.average_speed;
+    if(this.speed < 0 )
+	this.speed = 0;
     
 }
 
