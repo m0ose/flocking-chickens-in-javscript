@@ -193,25 +193,24 @@ function chicken( x,y, attract_radius, repel_radius, speed , mySimulator)
 		}
 	    }
 	    //forces.normalize();
-	    
-	    
+	       
 	    forces.normalize();
-	    
 	    this.pos.vx += forces.vx;
 	    this.pos.vy += forces.vy;
 	    this.pos.normalize();
 	    
 	}
-    }
+    
     this.pos.normalize();
     // set speed closer to average speed
-    this.speed += (this.average_speed  - this.speed) / 10;	
+    this.speed += (this.average_speed  - this.speed) / 20;	
 
-    if( this.speed >( 1.4 * this.average_speed) )
-	this.speed = 1.4 * this.average_speed;
+    if( this.speed >( 3 * this.average_speed) )
+	this.speed = 3 * this.average_speed;
     if(this.speed < 0 )
 	this.speed = 0;
-    
+
+    }    
 }
 
 
