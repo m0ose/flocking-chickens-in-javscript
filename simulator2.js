@@ -3,9 +3,9 @@ function simulator()
     //chicken related variables
     //DEFAULT VALUES
     this.flockSize = 250;
-    this.repelRadius = 0.01;//0.015
+    this.repelRadius = 0.012;//0.015
     this.attractRadius = 0.03;
-    this.radiusVariation = 0.007;
+    this.radiusVariation = 0.002;
     this.speedVariation = 0.0000;
     this.speed = 0.0006;
     this.drawRadii = false;

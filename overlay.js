@@ -37,9 +37,11 @@ USGSOverlay.prototype.onAdd = function() {
    //add a mouse repulsive thing
     canvas.onclick = function(e){
 	event_tmp = e;
-	if( uiMode.key == 'president' )
+	perturb(  e.offsetX/canvas.width, e.offsetY/canvas.height);
+    }
+	/*if( uiMode.key == 'president' )
 	{
-	    sim.attractors[0] = new attractor( 0.1,0.5, 2.0,0.4) ;
+	    sim.attractors[0] = new attractor( 0.1,0.5, 1.5,0.4) ;
 	    sim.attractors[0].pos.x = e.offsetX/canvas.width;
 	    sim.attractors[0].pos.y = e.offsetY/canvas.height;	
 	}
@@ -51,7 +53,8 @@ USGSOverlay.prototype.onAdd = function() {
 	{  
 	    sim.attractors[1] = new attractor( e.offsetX/canvas.width ,  e.offsetY/canvas.height, -10 ,0.2) ;
 	}
-    }
+*/
+    
   
     
     // Set the overlay's div_ property to this DIV
@@ -69,6 +72,7 @@ USGSOverlay.prototype.onAdd = function() {
 */
     
 }
+
 USGSOverlay.prototype.draw = function() {
     
     // Size and position the overlay. We use a southwest and northeast
@@ -100,3 +104,18 @@ USGSOverlay.prototype.onRemove = function() {
     this.div_ = null;
 }
 
+function perturb(x,y)
+{
+    if( uiMode.key =='president'){
+	sim.attractors[0] = new attractor( x ,  y, 1.5,0.6) ;//the llsim.y is revesed for some reason TODO
+    }
+    if( uiMode.key =='shooter'){
+	sim.attractors[1] = new attractor( x ,  y, -6.0,0.4) ;//the llsim.y is revesed for some reason TODO
+    }
+    if( uiMode.key =='bomb'){
+	sim.attractors.push(new attractor( x ,  y,-6.0,0.1) );
+	while( sim.attractors.length > 32 ){
+	    sim.attractors.splice(1,1);
+	}
+    }
+}

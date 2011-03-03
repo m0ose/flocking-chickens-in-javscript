@@ -196,18 +196,7 @@ function laserPointer( lx, ly)
     var llsim = LatLng2sim( tmpll);
     _laserlog += ( "\n laser pointer  " + lx + "," + ly + " . container coord " + tmpll.Ba +" , " +tmpll.Da + " sim coord : " + llsim.x + "," + llsim.y);
 
-    if( uiMode.key =='president'){
-	sim.attractors[0] = new attractor( llsim.x , 1 - llsim.y, 2.0,0.6) ;//the llsim.y is revesed for some reason TODO
-    }
-    if( uiMode.key =='shooter'){
-	sim.attractors[1] = new attractor( llsim.x , 1 - llsim.y, -14.0,0.4) ;//the llsim.y is revesed for some reason TODO
-    }
-    if( uiMode.key =='bomb'){
-	sim.attractors.push(new attractor( llsim.x , 1 -llsim.y,-14.0,0.1) );
-	while( sim.attractors.length > 32 ){
-	    sim.attractors.splice(1,1);
-	}
-    }
+    perturb( llsim.x, 1 - llsim.y);//i don't know why the y s not right
 
 }
 
