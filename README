@@ -10,7 +10,7 @@ p     put down an attractor,president mode
 b     bomb mode
 s     shooter mode
 w     remove walls
-o     stop viewing circles around attracors
+o     stop viewing circles around attractors
 x     start/stop
 r     reset
 k     toggle boundry kml layer
@@ -33,12 +33,10 @@ files :
           fetchXML.js          get the kml for the boundry
           overlay.js           classes for reading kml
           README	   
-          boids1.html          old file 
           embedTest.html       the flocking, kml, maps, and laser pointer tracking
           js_ajax.js	       actually fetches kml
           overlayTest.html     the flocking with an extra kml layer boundry
           simulator2.js        the simulator class
-          boids1.js            old
           crowd_boundry.kml    another kml
           laser2js.swf	       flash file for laser tracking.
           patches.js	       patches for storing neighbors
@@ -47,8 +45,6 @@ files :
           boids2.html	       just runs the simulator
           earthBoids.html      flocking with kml and google maps v3
           fetchXML.html	       fetches and draws kml without google maps
-          laserToJS.swf_old.swf  old
-          simulator.js	        old
           tests.js             some tests
     
    
